@@ -7,7 +7,6 @@ import VotePage from "../pages/VotePage";
 import MealVotePage from "../pages/MealVotePage";  // LunchVotePage에서 변경
 import ResourcesPage from "../pages/ResourcesPage";
 import InsightsPage from "../pages/InsightsPage";
-import FeedbackPage from "../pages/FeedbackPage";
 
 /**
 * The router is imported in app.jsx
@@ -24,6 +23,5 @@ export default () => (
       <Route path="/meal" component={MealVotePage} />  // /lunch에서 /meal로 경로 변경
       <Route path="/resources" component={ResourcesPage} />
       <Route path="/insights" component={InsightsPage} />
-      <Route path="/feedback" component={FeedbackPage} />
     </Switch>
 );

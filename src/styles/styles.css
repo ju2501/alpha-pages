@@ -294,3 +294,118 @@ body {
   color: inherit;
   width: 100%;
 }
+
+/* 폼 스타일 */
+.form-group {
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="email"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.button {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.button:hover {
+  background-color: var(--accent-color);
+}
+
+.button.primary {
+  background-color: var(--primary-color);
+}
+
+.button.primary:hover {
+  background-color: var(--primary-light);
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.5rem 1rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-decoration: none;
+  color: var(--text-color);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item .emoji {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.menu-item .menu-text {
+  font-size: 1.1rem;
+}
+
+.feature-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+
+

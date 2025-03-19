@@ -15,22 +15,22 @@ export default function Home() {
           동아리 활동 페이지에 오신 것을 환영합니다!
         </div>
         
-        <div className="feature-item">
-          <span className="emoji">📊</span>
-          <span>익명 투표로 쉽게 의견 모으기</span>
-        </div>
-        <div className="feature-item">
-          <span className="emoji">🍔</span>
-          <span>점심 배달 및 식사 정하기</span>
-        </div>
-        <div className="feature-item">
-          <span className="emoji">📚</span>
-          <span>유용한 자료 링크 모음</span>
-        </div>
-        <div className="feature-item">
-          <span className="emoji">💡</span>
-          <span>인사이트 및 지식 공유하기</span>
-        </div>
+        <Link href="/vote" className="feature-item">
+  <span className="emoji">📊</span>
+  <span>익명 투표로 쉽게 의견 모으기</span>
+</Link>
+<Link href="/meal" className="feature-item">
+  <span className="emoji">🍔</span>
+  <span>점심 배달 및 식사 정하기</span>
+</Link>
+<Link href="/resources" className="feature-item">
+  <span className="emoji">📚</span>
+  <span>유용한 자료 링크 모음</span>
+</Link>
+<Link href="/insights" className="feature-item">
+  <span className="emoji">💡</span>
+  <span>인사이트 및 지식 공유하기</span>
+</Link>
       </div>
       
       <div className="next-meeting">
