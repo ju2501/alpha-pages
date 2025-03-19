@@ -4,7 +4,7 @@ import Home from "../pages/home";
 import About from "../pages/about";
 // 새로운 페이지 컴포넌트들 불러오기
 import VotePage from "../pages/VotePage";
-import LunchVotePage from "../pages/LunchVotePage";
+import MealVotePage from "../pages/MealVotePage";  // LunchVotePage에서 변경
 import ResourcesPage from "../pages/ResourcesPage";
 import InsightsPage from "../pages/InsightsPage";
 
@@ -20,7 +20,7 @@ export default () => (
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/vote" component={VotePage} />
-      <Route path="/lunch" component={LunchVotePage} />
+      <Route path="/meal" component={MealVotePage} />  // /lunch에서 /meal로 경로 변경
       <Route path="/resources" component={ResourcesPage} />
       <Route path="/insights" component={InsightsPage} />
     </Switch>
