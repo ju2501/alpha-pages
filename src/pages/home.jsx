@@ -6,22 +6,22 @@ export default function Home() {
     <div>
       <header className="app-header">
         <h1>
-          알파 코딩 동아리 <span className="emoji">💻</span>
+          알파 <span className="emoji">💻</span>
         </h1>
       </header>
       
       <div className="card welcome-card">
         <div className="welcome-title">
-          동아리 활동 페이지에 오신 것을 환영합니다!
+          동아리 활동 페이지
         </div>
         
         <Link href="/vote" className="feature-item">
   <span className="emoji">📊</span>
-  <span>익명 투표로 쉽게 의견 모으기</span>
+  <span>익명 투표로 의견 모으기</span>
 </Link>
 <Link href="/meal" className="feature-item">
   <span className="emoji">🍔</span>
-  <span>점심 배달 및 식사 정하기</span>
+  <span>점심 배달/식사 정하기</span>
 </Link>
 <Link href="/resources" className="feature-item">
   <span className="emoji">📚</span>
@@ -29,7 +29,7 @@ export default function Home() {
 </Link>
 <Link href="/insights" className="feature-item">
   <span className="emoji">💡</span>
-  <span>인사이트 및 지식 공유하기</span>
+  <span>인사이트 및 지식 공유</span>
 </Link>
       </div>
       
@@ -53,7 +53,7 @@ export default function Home() {
         </Link>
         <Link href="/meal">
           <div className="action-button">
-            <span className="button-icon">🍽️</span> 식사 투표
+            <span className="button-icon">🍽️</span> 투표 현황
           </div>
         </Link>
       </div>
