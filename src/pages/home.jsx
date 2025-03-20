@@ -6,13 +6,13 @@ export default function Home() {
     <div>
       <header className="app-header">
         <h1>
-          알파 <span className="emoji">💻</span>
+          <span className="emoji">🦙</span> 알파 <span className="emoji">💻</span>
         </h1>
       </header>
       
       <div className="card welcome-card">
         <div className="welcome-title">
-          동아리 활동 페이지
+          활동 페이지
         </div>
         
         <Link href="/vote" className="feature-item">

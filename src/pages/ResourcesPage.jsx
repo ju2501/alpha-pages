@@ -3,8 +3,8 @@ import { useState } from "react";
 
 export default function ResourcesPage() {
   const [resources, setResources] = useState([
-    { title: "깃허브 레포지토리", url: "https://github.com/example/repository", description: "동아리 코드 저장소" },
-    { title: "학습 자료", url: "https://example.com/learning", description: "프로그래밍 학습 자료 모음" }
+    { title: "깃허브 레포지토리", url: "https://drive.google.com/drive/folders/1KUABSxgW2zxazNB0knH1Zppf63pYLoNV?usp=drive_link", description: "동아리 코드 저장소" },
+    { title: "학습 자료", url: "https://drive.google.com/drive/folders/1BQToG2ryYzwztIP2Mbm_GBevddY5xFr5?usp=drive_link", description: "프로그래밍 자료 모음" }
   ]);
   
   const [newResource, setNewResource] = useState({
