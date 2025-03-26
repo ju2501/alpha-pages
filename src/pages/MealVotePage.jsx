@@ -17,13 +17,21 @@ export default function MealVotePage() {
   
   // 가게 정보 관련 상태
   const [storeUrl, setStoreUrl] = useState("");
-  const [storeInfo, setStoreInfo] = useState(null);
+  const [storeName, setStoreName] = useState("");
+  const [savedStores, setSavedStores] = useState([]);
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [showAddStoreForm, setShowAddStoreForm] = useState(false);
   
-  // 로컬 스토리지에서 주문 데이터 불러오기
+  // 로컬 스토리지에서 데이터 불러오기
   useEffect(() => {
     const storedOrders = localStorage.getItem("alpacaOrders");
     if (storedOrders) {
       setSavedOrders(JSON.parse(storedOrders));
+    }
+    
+    const storedStores = localStorage.getItem("alpacaStores");
+    if (storedStores) {
+      setSavedStores(JSON.parse(storedStores));
     }
   }, []);
   
@@ -38,19 +46,49 @@ export default function MealVotePage() {
   
   // 가게 정보 추가 함수
   const addStoreInfo = () => {
-    if (!storeUrl) {
-      alert("가게 URL을 입력해주세요!");
+    if (!storeName) {
+      alert("가게 이름을 입력해주세요!");
       return;
     }
     
-    // 실제로는 API 호출이 불가능하므로 사용자가 입력한 정보로 저장
-    setStoreInfo({
-      name: orderTitle || "음식점 이름",
+    const newStore = {
+      id: Date.now(),
+      name: storeName,
       url: storeUrl,
       addedAt: new Date().toLocaleString()
-    });
+    };
+    
+    const updatedStores = [...savedStores, newStore];
+    setSavedStores(updatedStores);
+    localStorage.setItem("alpacaStores", JSON.stringify(updatedStores));
+    
+    // 입력 폼 초기화
+    setStoreName("");
+    setStoreUrl("");
+    setShowAddStoreForm(false);
     
     alert("가게 정보가 추가되었습니다!");
+  };
+  
+  // 가게 선택 함수
+  const selectStore = (store) => {
+    setSelectedStore(store);
+    setOrderTitle(store.name);
+  };
+  
+  // 가게 삭제 함수
+  const deleteStore = (storeId, event) => {
+    event.stopPropagation(); // 이벤트 버블링 방지
+    
+    const updatedStores = savedStores.filter(store => store.id !== storeId);
+    setSavedStores(updatedStores);
+    localStorage.setItem("alpacaStores", JSON.stringify(updatedStores));
+    
+    // 선택된 가게가 삭제된 경우 선택 해제
+    if (selectedStore && selectedStore.id === storeId) {
+      setSelectedStore(null);
+      setOrderTitle("");
+    }
   };
   
   const addOption = () => {
@@ -78,6 +116,11 @@ export default function MealVotePage() {
       return;
     }
     
+    if (!selectedStore && !orderTitle) {
+      alert("가게를 선택하거나 가게 이름을 입력해주세요!");
+      return;
+    }
+    
     setOrderItems([...orderItems, { menu: menuName, person: personName }]);
     setMenuName("");
     setPersonName("");
@@ -95,11 +138,17 @@ export default function MealVotePage() {
       return;
     }
     
+    if (!orderTitle) {
+      alert("음식점 이름을 입력해주세요!");
+      return;
+    }
+    
     const newOrder = {
       id: Date.now(),
       date: new Date().toISOString(),
       items: orderItems,
-      restaurant: orderTitle
+      restaurant: orderTitle,
+      storeUrl: selectedStore ? selectedStore.url : ""
     };
     
     const updatedOrders = [newOrder, ...savedOrders];
@@ -109,6 +158,7 @@ export default function MealVotePage() {
     // 폼 초기화
     setOrderItems([]);
     setOrderTitle("");
+    setSelectedStore(null);
     alert("주문 목록이 저장되었습니다!");
   };
   
@@ -204,53 +254,108 @@ export default function MealVotePage() {
         </div>
       ) : (
         <div className="card">
-          <div className="store-info-section">
-            <h3>음식점 정보</h3>
-            
-            <div className="form-group">
-              <label>음식점 이름</label>
-              <input
-                type="text"
-                value={orderTitle}
-                onChange={(e) => setOrderTitle(e.target.value)}
-                placeholder="예) 종로 중국집"
-              />
+          {/* 가게 목록 섹션 */}
+          <div className="store-list-section">
+            <div className="section-header">
+              <h3>가게 정보</h3>
+              <button 
+                onClick={() => setShowAddStoreForm(!showAddStoreForm)} 
+                className="button small"
+              >
+                {showAddStoreForm ? '취소' : '새 가게 추가'}
+              </button>
             </div>
             
-            <div className="form-group">
-              <label>네이버 가게 URL</label>
-              <div className="url-input-group">
-                <input
-                  type="text"
-                  value={storeUrl}
-                  onChange={(e) => setStoreUrl(e.target.value)}
-                  placeholder="https://map.naver.com/..."
-                  className="store-url-input"
-                />
-                <button onClick={addStoreInfo} className="button secondary">
-                  정보 저장
-                </button>
+            {showAddStoreForm && (
+              <div className="store-form">
+                <div className="form-group">
+                  <label>가게 이름</label>
+                  <input
+                    type="text"
+                    value={storeName}
+                    onChange={(e) => setStoreName(e.target.value)}
+                    placeholder="예) 종로 중국집"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>네이버 지도 URL</label>
+                  <div className="url-input-group">
+                    <input
+                      type="text"
+                      value={storeUrl}
+                      onChange={(e) => setStoreUrl(e.target.value)}
+                      placeholder="https://map.naver.com/..."
+                      className="store-url-input"
+                    />
+                    <button onClick={addStoreInfo} className="button secondary">
+                      저장
+                    </button>
+                  </div>
+                  <small className="helper-text">네이버 지도에서 가게 페이지 URL을 복사해서 붙여넣으세요</small>
+                </div>
               </div>
-              <small className="helper-text">네이버 지도에서 가게 페이지 URL을 복사해서 붙여넣으세요</small>
-            </div>
+            )}
             
-            {storeInfo && (
-              <div className="store-info-card">
-                <div className="store-header">
-                  <h4>{storeInfo.name}</h4>
-                  <a href={storeInfo.url} target="_blank" rel="noopener noreferrer" className="view-link">
-                    네이버에서 보기
-                  </a>
-                </div>
-                <div className="store-meta">
-                  <span>추가 시간: {storeInfo.addedAt}</span>
-                </div>
+            {savedStores.length > 0 && (
+              <div className="store-list">
+                <p className="helper-text">주문할 가게를 선택하세요</p>
+                {savedStores.map(store => (
+                  <div 
+                    key={store.id} 
+                    className={`store-item ${selectedStore && selectedStore.id === store.id ? 'selected' : ''}`}
+                    onClick={() => selectStore(store)}
+                  >
+                    <div className="store-info">
+                      <div className="store-name">{store.name}</div>
+                      {store.url && (
+                        <a 
+                          href={store.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="view-link"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          지도
+                        </a>
+                      )}
+                    </div>
+                    <button 
+                      className="delete-store" 
+                      onClick={(e) => deleteStore(store.id, e)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {!showAddStoreForm && savedStores.length === 0 && (
+              <div className="empty-state">
+                <p>저장된 가게가 없습니다. 새 가게를 추가해보세요!</p>
               </div>
             )}
           </div>
           
+          {/* 주문 추가 섹션 */}
           <div className="form-group order-section">
             <h3>주문 추가하기</h3>
+            
+            <div className="form-group">
+              <label>주문할 음식점 {selectedStore && '(선택됨)'}</label>
+              <input
+                type="text"
+                value={orderTitle}
+                onChange={(e) => {
+                  setOrderTitle(e.target.value);
+                  setSelectedStore(null); // 직접 입력시 선택 해제
+                }}
+                placeholder={selectedStore ? selectedStore.name : "예) 종로 중국집"}
+                className={selectedStore ? "highlighted-input" : ""}
+              />
+            </div>
+            
             <div className="order-form">
               <input
                 type="text"
@@ -276,6 +381,9 @@ export default function MealVotePage() {
             <>
               <div className="order-list-container">
                 <h3>현재 주문 목록</h3>
+                <div className="current-restaurant">
+                  <strong>주문 가게:</strong> {orderTitle || "(가게 이름 없음)"}
+                </div>
                 <ul className="order-list">
                   {orderItems.map((item, index) => (
                     <li key={index} className="order-item">
@@ -300,7 +408,7 @@ export default function MealVotePage() {
               <button onClick={saveOrder} className="button primary">
                 주문 목록 저장하기
               </button>
-            </>
+              </>
           )}
           
           {savedOrders.length > 0 && (
@@ -311,6 +419,16 @@ export default function MealVotePage() {
                   <div className="saved-order-header">
                     <h4>{order.restaurant}</h4>
                     <span>{new Date(order.date).toLocaleDateString()}</span>
+                    {order.storeUrl && (
+                      <a 
+                        href={order.storeUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="view-map-link"
+                      >
+                        지도 보기
+                      </a>
+                    )}
                   </div>
                   <ul className="order-list">
                     {order.items.map((item, idx) => (
