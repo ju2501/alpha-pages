@@ -298,38 +298,40 @@ export default function MealVotePage() {
             )}
             
             {savedStores.length > 0 && (
-              <div className="store-list">
-                <p className="helper-text">주문할 가게를 선택하세요</p>
-                {savedStores.map(store => (
-                  <div 
-                    key={store.id} 
-                    className={`store-item ${selectedStore && selectedStore.id === store.id ? 'selected' : ''}`}
-                    onClick={() => selectStore(store)}
-                  >
-                    <div className="store-info">
-                      <div className="store-name">{store.name}</div>
-                      {store.url && (
-                        <a 
-                          href={store.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="view-link"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          지도
-                        </a>
-                      )}
-                    </div>
-                    <button 
-                      className="delete-store" 
-                      onClick={(e) => deleteStore(store.id, e)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
+  <div className="store-list">
+    <p className="helper-text">주문할 가게를 선택하세요</p>
+    <div className="store-grid">
+      {savedStores.map(store => (
+        <div 
+          key={store.id} 
+          className={`store-item ${selectedStore && selectedStore.id === store.id ? 'selected' : ''}`}
+          onClick={() => selectStore(store)}
+        >
+          <div className="store-info">
+            <div className="store-name">{store.name}</div>
+            {store.url && (
+              <a 
+                href={store.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="view-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                지도
+              </a>
             )}
+          </div>
+          <button 
+            className="delete-store" 
+            onClick={(e) => deleteStore(store.id, e)}
+          >
+            ×
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
             
             {!showAddStoreForm && savedStores.length === 0 && (
               <div className="empty-state">
