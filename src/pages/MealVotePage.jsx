@@ -1,18 +1,23 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function MealVotePage() {
+  // 날짜 및 투표 관련 상태
   const [date, setDate] = useState("");
   const [mealType, setMealType] = useState("lunch");
   const [options, setOptions] = useState(["", ""]);
   const [voteTitle, setVoteTitle] = useState("");
   
-  // 주문 목록 관련 상태
+  // 주문 관련 상태
+  const [orderTitle, setOrderTitle] = useState("");
   const [orderItems, setOrderItems] = useState([]);
   const [menuName, setMenuName] = useState("");
   const [personName, setPersonName] = useState("");
   const [savedOrders, setSavedOrders] = useState([]);
   const [viewMode, setViewMode] = useState("vote"); // vote 또는 order
+  
+  // 가게 정보 관련 상태
+  const [storeUrl, setStoreUrl] = useState("");
+  const [storeInfo, setStoreInfo] = useState(null);
   
   // 로컬 스토리지에서 주문 데이터 불러오기
   useEffect(() => {
@@ -30,6 +35,23 @@ export default function MealVotePage() {
       setVoteTitle(voteTitle || "저녁 뒷풀이 장소 투표");
     }
   }, [mealType]);
+  
+  // 가게 정보 추가 함수
+  const addStoreInfo = () => {
+    if (!storeUrl) {
+      alert("가게 URL을 입력해주세요!");
+      return;
+    }
+    
+    // 실제로는 API 호출이 불가능하므로 사용자가 입력한 정보로 저장
+    setStoreInfo({
+      name: orderTitle || "음식점 이름",
+      url: storeUrl,
+      addedAt: new Date().toLocaleString()
+    });
+    
+    alert("가게 정보가 추가되었습니다!");
+  };
   
   const addOption = () => {
     setOptions([...options, ""]);
@@ -89,8 +111,6 @@ export default function MealVotePage() {
     setOrderTitle("");
     alert("주문 목록이 저장되었습니다!");
   };
-  
-  const [orderTitle, setOrderTitle] = useState("");
   
   return (
     <div className="page-container">
@@ -184,18 +204,53 @@ export default function MealVotePage() {
         </div>
       ) : (
         <div className="card">
-          <div className="form-group">
-            <label>주문할 음식점</label>
-            <input
-              type="text"
-              value={orderTitle}
-              onChange={(e) => setOrderTitle(e.target.value)}
-              placeholder="예) 종로 중국집"
-            />
+          <div className="store-info-section">
+            <h3>음식점 정보</h3>
+            
+            <div className="form-group">
+              <label>음식점 이름</label>
+              <input
+                type="text"
+                value={orderTitle}
+                onChange={(e) => setOrderTitle(e.target.value)}
+                placeholder="예) 종로 중국집"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>네이버 가게 URL</label>
+              <div className="url-input-group">
+                <input
+                  type="text"
+                  value={storeUrl}
+                  onChange={(e) => setStoreUrl(e.target.value)}
+                  placeholder="https://map.naver.com/..."
+                  className="store-url-input"
+                />
+                <button onClick={addStoreInfo} className="button secondary">
+                  정보 저장
+                </button>
+              </div>
+              <small className="helper-text">네이버 지도에서 가게 페이지 URL을 복사해서 붙여넣으세요</small>
+            </div>
+            
+            {storeInfo && (
+              <div className="store-info-card">
+                <div className="store-header">
+                  <h4>{storeInfo.name}</h4>
+                  <a href={storeInfo.url} target="_blank" rel="noopener noreferrer" className="view-link">
+                    네이버에서 보기
+                  </a>
+                </div>
+                <div className="store-meta">
+                  <span>추가 시간: {storeInfo.addedAt}</span>
+                </div>
+              </div>
+            )}
           </div>
           
-          <div className="form-group">
-            <label>주문 추가하기</label>
+          <div className="form-group order-section">
+            <h3>주문 추가하기</h3>
             <div className="order-form">
               <input
                 type="text"

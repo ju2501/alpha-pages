@@ -887,5 +887,61 @@ body {
   }
 }
 
+.store-info-section {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1.5rem;
+}
+
+.url-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.store-url-input {
+  flex: 1;
+}
+
+.helper-text {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+.store-info-card {
+  background-color: #f9f9f9;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.store-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.store-header h4 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.view-link {
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--secondary-color);
+}
+
+.store-meta {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.order-section {
+  margin-top: 1.5rem;
+}
+
 
 
