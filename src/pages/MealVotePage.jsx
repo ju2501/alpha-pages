@@ -22,18 +22,52 @@ export default function MealVotePage() {
   const [selectedStore, setSelectedStore] = useState(null);
   const [showAddStoreForm, setShowAddStoreForm] = useState(false);
   
-  // 로컬 스토리지에서 데이터 불러오기
-  useEffect(() => {
-    const storedOrders = localStorage.getItem("alpacaOrders");
-    if (storedOrders) {
-      setSavedOrders(JSON.parse(storedOrders));
+  // 데이터 불러오기
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      // 가게 정보 불러오기
+      const storesResponse = await fetch('/.netlify/functions/stores');
+      if (storesResponse.ok) {
+        const storesData = await storesResponse.json();
+        setSavedStores(storesData);
+      } else {
+        // API 호출 실패 시 로컬 스토리지에서 불러오기
+        const storedStores = localStorage.getItem("alpacaStores");
+        if (storedStores) {
+          setSavedStores(JSON.parse(storedStores));
+        }
+      }
+      
+      // 주문 정보 불러오기
+      const ordersResponse = await fetch('/.netlify/functions/orders');
+      if (ordersResponse.ok) {
+        const ordersData = await ordersResponse.json();
+        setSavedOrders(ordersData);
+      } else {
+        // API 호출 실패 시 로컬 스토리지에서 불러오기
+        const storedOrders = localStorage.getItem("alpacaOrders");
+        if (storedOrders) {
+          setSavedOrders(JSON.parse(storedOrders));
+        }
+      }
+    } catch (error) {
+      console.error("데이터 로딩 오류:", error);
+      // 오류 발생 시 로컬 스토리지에서 불러오기
+      const storedStores = localStorage.getItem("alpacaStores");
+      if (storedStores) {
+        setSavedStores(JSON.parse(storedStores));
+      }
+      
+      const storedOrders = localStorage.getItem("alpacaOrders");
+      if (storedOrders) {
+        setSavedOrders(JSON.parse(storedOrders));
+      }
     }
-    
-    const storedStores = localStorage.getItem("alpacaStores");
-    if (storedStores) {
-      setSavedStores(JSON.parse(storedStores));
-    }
-  }, []);
+  };
+  
+  fetchData();
+}, []);
   
   // 식사 유형에 따른 기본 제목 설정
   useEffect(() => {
@@ -44,31 +78,49 @@ export default function MealVotePage() {
     }
   }, [mealType]);
   
-  // 가게 정보 추가 함수
-  const addStoreInfo = () => {
-    if (!storeName) {
-      alert("가게 이름을 입력해주세요!");
-      return;
-    }
+  const addStoreInfo = async () => {
+  if (!storeName) {
+    alert("가게 이름을 입력해주세요!");
+    return;
+  }
+  
+  const newStore = {
+    name: storeName,
+    url: storeUrl,
+    addedAt: new Date().toLocaleString()
+  };
+  
+  try {
+    const response = await fetch('/.netlify/functions/stores', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newStore)
+    });
     
-    const newStore = {
-      id: Date.now(),
-      name: storeName,
-      url: storeUrl,
-      addedAt: new Date().toLocaleString()
-    };
+    if (!response.ok) throw new Error('서버 응답 오류');
+    const savedStore = await response.json();
     
-    const updatedStores = [...savedStores, newStore];
-    setSavedStores(updatedStores);
-    localStorage.setItem("alpacaStores", JSON.stringify(updatedStores));
-    
-    // 입력 폼 초기화
+    setSavedStores([...savedStores, savedStore]);
     setStoreName("");
     setStoreUrl("");
     setShowAddStoreForm(false);
-    
     alert("가게 정보가 추가되었습니다!");
-  };
+  } catch (error) {
+    console.error('가게 정보 저장 오류:', error);
+    // 오류 시 로컬 스토리지에 저장
+    const storeWithId = { ...newStore, id: Date.now() };
+    const updatedStores = [...savedStores, storeWithId];
+    setSavedStores(updatedStores);
+    localStorage.setItem("alpacaStores", JSON.stringify(updatedStores));
+    
+    setStoreName("");
+    setStoreUrl("");
+    setShowAddStoreForm(false);
+    alert("가게 정보가 로컬에 저장되었습니다 (서버 연결 실패)");
+  }
+};
   
   // 가게 선택 함수
   const selectStore = (store) => {
@@ -132,16 +184,55 @@ export default function MealVotePage() {
     setOrderItems(newItems);
   };
   
-  const saveOrder = () => {
-    if (orderItems.length === 0) {
-      alert("최소 한 개 이상의 주문 항목을 추가해주세요!");
-      return;
-    }
+  const saveOrder = async () => {
+  if (orderItems.length === 0) {
+    alert("최소 한 개 이상의 주문 항목을 추가해주세요!");
+    return;
+  }
+  
+  if (!orderTitle) {
+    alert("음식점 이름을 입력해주세요!");
+    return;
+  }
+  
+  const newOrder = {
+    restaurant: orderTitle,
+    storeUrl: selectedStore ? selectedStore.url : "",
+    items: orderItems,
+    date: new Date().toISOString()
+  };
+  
+  try {
+    const response = await fetch('/.netlify/functions/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newOrder)
+    });
     
-    if (!orderTitle) {
-      alert("음식점 이름을 입력해주세요!");
-      return;
-    }
+    if (!response.ok) throw new Error('서버 응답 오류');
+    const savedOrder = await response.json();
+    
+    setSavedOrders([savedOrder, ...savedOrders]);
+    setOrderItems([]);
+    setOrderTitle("");
+    setSelectedStore(null);
+    alert("주문 목록이 저장되었습니다!");
+  } catch (error) {
+    console.error('주문 저장 오류:', error);
+    // 오류 시 로컬 스토리지에 저장
+    const orderWithId = { ...newOrder, id: Date.now() };
+    const updatedOrders = [orderWithId, ...savedOrders];
+    setSavedOrders(updatedOrders);
+    localStorage.setItem("alpacaOrders", JSON.stringify(updatedOrders));
+    
+    setOrderItems([]);
+    setOrderTitle("");
+    setSelectedStore(null);
+    alert("주문 목록이 로컬에 저장되었습니다 (서버 연결 실패)");
+  }
+};
     
     const newOrder = {
       id: Date.now(),
